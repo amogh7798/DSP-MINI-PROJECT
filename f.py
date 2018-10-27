@@ -1,88 +1,126 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
-k=2
 
-tk=np.array([9,2])
-ck=np.array([4,2])
 
-tk_=np.array([0,0])
-ck_=np.array([1,1])
 
-t=np.arange(10)
+k=int(input("ENTER THE k:"))
+M=int(input("ENTER THE M:"))
+
+tk_temp=input("ENTER tk VALUES:")
+ck_temp=input("ENTER ck VALUES:")
+
+tk_data=list(map(int,tk_temp.split(',')))
+ck_data=list(map(int,ck_temp.split(',')))
+
+tk=np.array(tk_data)
+ck=np.array(ck_data)
+
+ack=input("ERROR TO BE ADDED?:")
+tk_=np.zeros(k,np.int8)
+ck_=np.ones(k,np.int8)
+
+t=np.arange(M)
 c=np.arange(5)
 
 def h(x):
-      return np.exp(-x*x/0.5)
+      return np.exp(-x*x/(M*0.05))
 e=0
 
 def z(x):
        temp=0
-       for i in range(0,len(tk)):
+       for i in range(0,k):
                 temp=temp+ck[i]*h(x-tk[i])
        return temp
 
-q=np.zeros(10)
+q=np.zeros(M)
 for i in t:
-      q[i]=z(i)+np.random.uniform(0,3)
+      if(ack=="yes" or ack=="YES"):
+             q[i]=z(i)+np.random.uniform(-1,1)
+      else:
+             q[i]=z(i)
 plt.plot(t,q)
 plt.show()
 
-print(tk_)
-print(ck_)
+start=time.time()
+print("TIMER STARTED.....")
+print("\n\n\n")
+e=0
 
 def z_(x,y):
-             return ck_[0]*h(y-x)+ck_[1]*h(y-tk_[1])
-
-def z_2(x,y):
-             return ck_[0]*h(y-tk_[0])+ck_[1]*h(y-x)
+             temp=0
+             for i in range(0,k):
+                     if(i==e):
+                           temp=temp+ck_[i]*h(y-x)
+                     else:
+                           temp=temp+ck_[i]*h(y-tk_[i])
+             return temp
 
 def z_1(x,y):
-             return x*h(y-tk_[0])+ck_[1]*h(y-tk_[1])
-
-def z_3(x,y):
-             return ck_[0]*h(y-tk_[0])+x*h(y-tk_[1])
+             temp=0
+             for i in range(0,k):
+                     if(i==e):
+                           temp=temp+x*h(y-tk_[i])
+                     else:
+                           temp=temp+ck_[i]*h(y-tk_[i])
+             return temp
 
 def f(x):
        temp=0
-       for i in range(10):
+       for i in range(M):
            temp=temp+(q[i]-z_(x,i))*(q[i]-z_(x,i))
-       return -1*temp
-
-def f2(x):
-       temp=0
-       for i in range(10):
-           temp=temp+(q[i]-z_2(x,i))*(q[i]-z_2(x,i))
-       return -1*temp
-
-def f3(x):
-       temp=0
-       for i in range(10):
-           temp=temp+(q[i]-z_3(x,i))*(q[i]-z_3(x,i))
        return -1*temp
 
 def f1(x):
        temp=0
-       for i in range(10):
+       for i in range(M):
            temp=temp+(q[i]-z_1(x,i))*(q[i]-z_1(x,i))
        return -1*temp
 
+#ITERML LOOP
 for i in range(1,2000):
-         tk_[0]=t[np.argmax(f(t))]
-         ck_[0]=c[np.argmax(f1(c))]
-         tk_[1]=t[np.argmax(f2(t))]
-         ck_[1]=c[np.argmax(f3(c))]
+         for j in range(0,k):
+               tk_[j]=t[np.argmax(f(t))]
+               ck_[j]=c[np.argmax(f1(c))]
+               e=e+1 
+         e=0
 
-u=np.zeros(10)
+u=np.zeros(M)
 
 print(tk_)
 print(ck_)
 for i in range(0,k):
          u[tk_[i]]=ck_[i]
- 
+
+print("TOTAL TIME ELASPED:"+str(time.time()-start)+" SECONDS")
+
 plt.stem(t,u)
 plt.show()
 
+def z_final(x):
+       temp=0
+       for i in range(0,k):
+                temp=temp+ck_[i]*h(x-tk_[i])
+       return temp
 
+temperr=0
+temperr2=0
+sd1=0
+for i in range(0,M):
+       temperr=temperr+(abs(z_final(i)-z(i))*abs(z_final(i)-z(i)))
+       temperr2=temperr2+(abs(z(i))*abs(z(i)))
+       sd1=sd1+((q[i]-z_final(i))*(q[i]-z_final(i)))
 
+print('\n')
+errA=temperr/temperr2
+print("THE ERROR IN AMPLITUDE IS:"+str(errA))
 
+temperrt=0
+for i in range(0,k):
+        temperrt=temperrt+(abs(tk_[i]-tk[k-i-1])*abs(tk_[i]-tk[k-i-1]))
+
+errT=np.sqrt((1/k)*temperrt)
+print("THE ERROR IN TIME IS:"+str(errT))
+
+print("THE STANDARD DEVIATION IS:"+str(np.sqrt((1/M)*sd1)))
