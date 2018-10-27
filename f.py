@@ -12,14 +12,14 @@ tk_temp=input("ENTER tk VALUES:")
 ck_temp=input("ENTER ck VALUES:")
 
 tk_data=list(map(int,tk_temp.split(',')))
-ck_data=list(map(int,ck_temp.split(',')))
+ck_data=list(map(float,ck_temp.split(',')))
 
 tk=np.array(tk_data)
 ck=np.array(ck_data)
 
 ack=input("ERROR TO BE ADDED?:")
 tk_=np.zeros(k,np.int8)
-ck_=np.ones(k,np.int8)
+ck_=np.ones(k,np.float32)
 
 t=np.arange(M)
 c=np.arange(0,5,0.001)
@@ -89,7 +89,7 @@ for i in range(1,2000):
                e=e+1 
          e=0
 
-u=np.zeros(M)
+u=np.zeros(M,np.float32)
 
 
 print(tk_)
