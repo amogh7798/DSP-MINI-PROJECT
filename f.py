@@ -41,6 +41,9 @@ for i in t:
       else:
              q[i]=z(i)
 plt.plot(t,q)
+plt.xlabel("TIME")
+plt.ylabel("AMPLITUDE")
+plt.title("IMPULSE PASSED THROUGH GAUSSIAN KERNEL")
 plt.show()
 
 start=time.time()
@@ -96,6 +99,9 @@ for i in range(0,k):
 print("TOTAL TIME ELASPED:"+str(time.time()-start)+" SECONDS")
 
 plt.stem(t,u)
+plt.xlabel("TIME")
+plt.ylabel("AMPLITUDE")
+plt.title("RECONSTRUCTED IMPULSE")
 plt.show()
 
 def z_final(x):
