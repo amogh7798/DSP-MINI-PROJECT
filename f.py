@@ -22,7 +22,7 @@ tk_=np.zeros(k,np.int8)
 ck_=np.ones(k,np.int8)
 
 t=np.arange(M)
-c=np.arange(5)
+c=np.arange(0,5,0.001)
 
 def h(x):
       return np.exp(-x*x/(M*0.05))
@@ -91,6 +91,7 @@ for i in range(1,2000):
 
 u=np.zeros(M)
 
+
 print(tk_)
 print(ck_)
 for i in range(0,k):
@@ -98,16 +99,18 @@ for i in range(0,k):
 
 print("TOTAL TIME ELASPED:"+str(time.time()-start)+" SECONDS")
 
-plt.stem(t,u)
+plt.stem(t,u,label="Reconstructed Output")
 plt.xlabel("TIME")
 plt.ylabel("AMPLITUDE")
 plt.title("RECONSTRUCTED IMPULSE")
+plt.stem(tk,ck,'r',markerfmt='ro',label="Original impulse")
+plt.legend()
 plt.show()
 
 def z_final(x):
        temp=0
        for i in range(0,k):
-                temp=temp+ck_[i]*h(x-tk_[i])
+                temp=temp+u[tk_[i]]*h(x-tk_[i])
        return temp
 
 temperr=0
@@ -118,13 +121,20 @@ for i in range(0,M):
        temperr2=temperr2+(abs(z(i))*abs(z(i)))
        sd1=sd1+((q[i]-z_final(i))*(q[i]-z_final(i)))
 
+w=z_final(t)
+plt.plot(t,q,label="Original kernel Output")
+plt.plot(t,w,'r',label="Reconstructed kernel Output")
+plt.legend()
+plt.show()
+
 print('\n')
 errA=temperr/temperr2
 print("THE ERROR IN AMPLITUDE IS:"+str(errA))
 
 temperrt=0
+tk_.sort()
 for i in range(0,k):
-        temperrt=temperrt+(abs(tk_[i]-tk[k-i-1])*abs(tk_[i]-tk[k-i-1]))
+        temperrt=temperrt+(abs(tk_[i]-tk[i])*abs(tk_[i]-tk[i]))
 
 errT=np.sqrt((1/k)*temperrt)
 print("THE ERROR IN TIME IS:"+str(errT))
